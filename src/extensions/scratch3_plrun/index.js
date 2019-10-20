@@ -28,20 +28,20 @@ const DEVICE = {
     LED: 9
 };
 
-const TONE_MAP = {
-    1: [33, 65, 131, 262, 523, 1046, 2093, 4186],
-    2: [35, 69, 139, 277, 554, 1109, 2217, 4435],
-    3: [37, 73, 147, 294, 587, 1175, 2349, 4699],
-    4: [39, 78, 156, 311, 622, 1245, 2849, 4978],
-    5: [41, 82, 165, 330, 659, 1319, 2637, 5274],
-    6: [44, 87, 175, 349, 698, 1397, 2794, 5588],
-    7: [46, 92, 185, 370, 740, 1480, 2960, 5920],
-    8: [49, 98, 196, 392, 784, 1568, 3136, 6272],
-    9: [52, 104, 208, 415, 831, 1661, 3322, 6645],
-    10: [55, 110, 220, 440, 880, 1760, 3520, 7040],
-    11: [58, 117, 233, 466, 932, 1865, 3729, 7459],
-    12: [62, 123, 247, 494, 988, 1976, 3951, 7902]
-};
+const TONE_MAP = [
+    33, 65, 131, 262, 523, 1046, 2093, 4186,
+    35, 69, 139, 277, 554, 1109, 2217, 4435,
+    37, 73, 147, 294, 587, 1175, 2349, 4699,
+    39, 78, 156, 311, 622, 1245, 2849, 4978,
+    41, 82, 165, 330, 659, 1319, 2637, 5274,
+    44, 87, 175, 349, 698, 1397, 2794, 5588,
+    46, 92, 185, 370, 740, 1480, 2960, 5920,
+    49, 98, 196, 392, 784, 1568, 3136, 6272,
+    52, 104, 208, 415, 831, 1661, 3322, 6645,
+    55, 110, 220, 440, 880, 1760, 3520, 7040,
+    58, 117, 233, 466, 932, 1865, 3729, 7459,
+    62, 123, 247, 494, 988, 1976, 3951, 7902
+];
 
 const DIRECTION = {
     CENTER: 0,
@@ -63,7 +63,7 @@ const COLOR = {
     PINK: [1.0, 0.0, 0.56],
     YELLOW: [1.0, 1.0, 0.0],
     WHITE: [1.0, 1.0, 1.0]
-}
+};
 
 const MOVE = {
     FORWARD: [1.0, 1.0],
@@ -82,13 +82,18 @@ class Scratch3PlRunBlocks {
         this.runtime = runtime;
         this.runtime.on('PROJECT_STOP_ALL', this.stopAll.bind(this));
 
+        this._playNoteForPicker = this._playNoteForPicker.bind(this);
+        this.runtime.on('PLAY_NOTE', this._playNoteForPicker);
+
         this.digitalValue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.analogValue = [0, 0, 0, 0, 0, 0];
         this.ultraSonicValue = 0;
 
-        window.ipcRenderer.on('recv-data', (event, arg) => {
-            this._handleMessage(arg);
-        });
+        if (window.ipcRenderer) {
+            window.ipcRenderer.on('recv-data', (event, arg) => {
+                this._handleMessage(arg);
+            });
+        }
     }
 
     _handleMessage (msg) {
@@ -126,7 +131,6 @@ class Scratch3PlRunBlocks {
     
     _sendMessage (message) {
         message[2] = message.length - 3;
-        const messageText = JSON.stringify(message);
         window.ipcRenderer.send('send-data', message);
     }
 
@@ -269,22 +273,16 @@ class Scratch3PlRunBlocks {
                     opcode: 'setAudioOctave',
                     text: formatMessage({
                         id: 'plrun.setAudioOctave',
-                        default: 'play note [ARG1] octave [ARG2] beat [ARG3]',
+                        default: 'play note [ARG1] beat [ARG2]',
                         description: 'play audio'
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
                         ARG1: {
-                            type: ArgumentType.NUMBER,
-                            menu: 'audioNote',
-                            defaultValue: 1
+                            type: ArgumentType.NOTE,
+                            defaultValue: 60
                         },
                         ARG2: {
-                            type: ArgumentType.NUMBER,
-                            menu: 'audioOtave',
-                            defaultValue: 4
-                        },
-                        ARG3: {
                             type: ArgumentType.NUMBER,
                             menu: 'audioBeat',
                             defaultValue: 1000
@@ -931,10 +929,10 @@ class Scratch3PlRunBlocks {
     }
 
     setAudioOctave (args) {
-        const note = args.ARG1;
-        const octave = args.ARG2;
-        const value = TONE_MAP[note][octave - 1];
-        const duration = args.ARG3;
+        let note = args.ARG1;
+        note = Math.max(Math.min(note, 119), 24) - 24;
+        const value = TONE_MAP[note];
+        const duration = args.ARG2;
 
         this._playNote(value, duration);
         return new Promise(resolve => {
@@ -967,6 +965,13 @@ class Scratch3PlRunBlocks {
         });
     }
 
+    _playNoteForPicker (noteNum) {
+        const note = Math.max(Math.min(noteNum, 119), 24) - 24;
+        const value = TONE_MAP[note];
+        
+        this._playNote(value, 0.25);
+    }
+
     _playNote (note, duration) {
         const d = [0xFF, 0x55, 0, 0, ACTION.SET, DEVICE.TONE, 8,
             note & 0xFF, (note & 0xFF00) >> 8,
@@ -977,7 +982,7 @@ class Scratch3PlRunBlocks {
     getUltrasonic (args) {
         const d = [0xFF, 0x55, 0, 0, ACTION.GET, DEVICE.ULTRASONIC, 10, 9];
         this._sendMessage(d);
-        return this.ultraSonicValue;
+        return parseFloat(this.ultraSonicValue.toFixed(2));
     }
     
     _getValue (port) {
