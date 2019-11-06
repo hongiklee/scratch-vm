@@ -7,7 +7,10 @@ const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
 
 // eslint-disable-next-line max-len
-const blockIconURI = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MCA0MCI+PHN0eWxlPi5zdDJ7ZmlsbDpyZWR9LnN0M3tmaWxsOiNlMGUwZTB9LnN0NHtmaWxsOm5vbmU7c3Ryb2tlOiM2NjY7c3Ryb2tlLXdpZHRoOi41O3N0cm9rZS1taXRlcmxpbWl0OjEwfTwvc3R5bGU+PHBhdGggZD0iTTM1IDI4SDVhMSAxIDAgMCAxLTEtMVYxMmMwLS42LjQtMSAxLTFoMzBjLjUgMCAxIC40IDEgMXYxNWMwIC41LS41IDEtMSAxeiIgZmlsbD0iI2ZmZiIgaWQ9IkxheWVyXzYiLz48ZyBpZD0iTGF5ZXJfNCI+PHBhdGggY2xhc3M9InN0MiIgZD0iTTQgMjVoMzJ2Mi43SDR6TTEzIDI0aC0yLjJhMSAxIDAgMCAxLTEtMXYtOS43YzAtLjYuNC0xIDEtMUgxM2MuNiAwIDEgLjQgMSAxVjIzYzAgLjYtLjUgMS0xIDF6Ii8+PHBhdGggY2xhc3M9InN0MiIgZD0iTTYuMSAxOS4zdi0yLjJjMC0uNS40LTEgMS0xaDkuN2MuNSAwIDEgLjUgMSAxdjIuMmMwIC41LS41IDEtMSAxSDcuMWExIDEgMCAwIDEtMS0xeiIvPjxjaXJjbGUgY2xhc3M9InN0MiIgY3g9IjIyLjgiIGN5PSIxOC4yIiByPSIzLjQiLz48Y2lyY2xlIGNsYXNzPSJzdDIiIGN4PSIzMC42IiBjeT0iMTguMiIgcj0iMy40Ii8+PHBhdGggY2xhc3M9InN0MiIgZD0iTTQuMiAyN2gzMS45di43SDQuMnoiLz48L2c+PGcgaWQ9IkxheWVyXzUiPjxjaXJjbGUgY2xhc3M9InN0MyIgY3g9IjIyLjgiIGN5PSIxOC4yIiByPSIyLjMiLz48Y2lyY2xlIGNsYXNzPSJzdDMiIGN4PSIzMC42IiBjeT0iMTguMiIgcj0iMi4zIi8+PHBhdGggY2xhc3M9InN0MyIgZD0iTTEyLjUgMjIuOWgtMS4yYy0uMyAwLS41LS4yLS41LS41VjE0YzAtLjMuMi0uNS41LS41aDEuMmMuMyAwIC41LjIuNS41djguNGMwIC4zLS4yLjUtLjUuNXoiLz48cGF0aCBjbGFzcz0ic3QzIiBkPSJNNy4yIDE4Ljd2LTEuMmMwLS4zLjItLjUuNS0uNWg4LjRjLjMgMCAuNS4yLjUuNXYxLjJjMCAuMy0uMi41LS41LjVINy43Yy0uMyAwLS41LS4yLS41LS41ek00IDI2aDMydjJINHoiLz48L2c+PGcgaWQ9IkxheWVyXzMiPjxwYXRoIGNsYXNzPSJzdDQiIGQ9Ik0zNS4yIDI3LjlINC44YTEgMSAwIDAgMS0xLTFWMTIuMWMwLS42LjUtMSAxLTFoMzAuNWMuNSAwIDEgLjQgMSAxVjI3YTEgMSAwIDAgMS0xLjEuOXoiLz48cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMzUuMiAyNy45SDQuOGExIDEgMCAwIDEtMS0xVjEyLjFjMC0uNi41LTEgMS0xaDMwLjVjLjUgMCAxIC40IDEgMVYyN2ExIDEgMCAwIDEtMS4xLjl6Ii8+PC9nPjwvc3ZnPg==';
+// const blockIconURI = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MCA0MCI+PHN0eWxlPi5zdDJ7ZmlsbDpyZWR9LnN0M3tmaWxsOiNlMGUwZTB9LnN0NHtmaWxsOm5vbmU7c3Ryb2tlOiM2NjY7c3Ryb2tlLXdpZHRoOi41O3N0cm9rZS1taXRlcmxpbWl0OjEwfTwvc3R5bGU+PHBhdGggZD0iTTM1IDI4SDVhMSAxIDAgMCAxLTEtMVYxMmMwLS42LjQtMSAxLTFoMzBjLjUgMCAxIC40IDEgMXYxNWMwIC41LS41IDEtMSAxeiIgZmlsbD0iI2ZmZiIgaWQ9IkxheWVyXzYiLz48ZyBpZD0iTGF5ZXJfNCI+PHBhdGggY2xhc3M9InN0MiIgZD0iTTQgMjVoMzJ2Mi43SDR6TTEzIDI0aC0yLjJhMSAxIDAgMCAxLTEtMXYtOS43YzAtLjYuNC0xIDEtMUgxM2MuNiAwIDEgLjQgMSAxVjIzYzAgLjYtLjUgMS0xIDF6Ii8+PHBhdGggY2xhc3M9InN0MiIgZD0iTTYuMSAxOS4zdi0yLjJjMC0uNS40LTEgMS0xaDkuN2MuNSAwIDEgLjUgMSAxdjIuMmMwIC41LS41IDEtMSAxSDcuMWExIDEgMCAwIDEtMS0xeiIvPjxjaXJjbGUgY2xhc3M9InN0MiIgY3g9IjIyLjgiIGN5PSIxOC4yIiByPSIzLjQiLz48Y2lyY2xlIGNsYXNzPSJzdDIiIGN4PSIzMC42IiBjeT0iMTguMiIgcj0iMy40Ii8+PHBhdGggY2xhc3M9InN0MiIgZD0iTTQuMiAyN2gzMS45di43SDQuMnoiLz48L2c+PGcgaWQ9IkxheWVyXzUiPjxjaXJjbGUgY2xhc3M9InN0MyIgY3g9IjIyLjgiIGN5PSIxOC4yIiByPSIyLjMiLz48Y2lyY2xlIGNsYXNzPSJzdDMiIGN4PSIzMC42IiBjeT0iMTguMiIgcj0iMi4zIi8+PHBhdGggY2xhc3M9InN0MyIgZD0iTTEyLjUgMjIuOWgtMS4yYy0uMyAwLS41LS4yLS41LS41VjE0YzAtLjMuMi0uNS41LS41aDEuMmMuMyAwIC41LjIuNS41djguNGMwIC4zLS4yLjUtLjUuNXoiLz48cGF0aCBjbGFzcz0ic3QzIiBkPSJNNy4yIDE4Ljd2LTEuMmMwLS4zLjItLjUuNS0uNWg4LjRjLjMgMCAuNS4yLjUuNXYxLjJjMCAuMy0uMi41LS41LjVINy43Yy0uMyAwLS41LS4yLS41LS41ek00IDI2aDMydjJINHoiLz48L2c+PGcgaWQ9IkxheWVyXzMiPjxwYXRoIGNsYXNzPSJzdDQiIGQ9Ik0zNS4yIDI3LjlINC44YTEgMSAwIDAgMS0xLTFWMTIuMWMwLS42LjUtMSAxLTFoMzAuNWMuNSAwIDEgLjQgMSAxVjI3YTEgMSAwIDAgMS0xLjEuOXoiLz48cGF0aCBjbGFzcz0ic3Q0IiBkPSJNMzUuMiAyNy45SDQuOGExIDEgMCAwIDEtMS0xVjEyLjFjMC0uNi41LTEgMS0xaDMwLjVjLjUgMCAxIC40IDEgMVYyN2ExIDEgMCAwIDEtMS4xLjl6Ii8+PC9nPjwvc3ZnPg==';
+
+// eslint-disable-next-line max-len
+const blockIconURI = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgc3R5bGU9IiI+PHJlY3QgaWQ9ImJhY2tncm91bmRyZWN0IiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4PSIwIiB5PSIwIiBmaWxsPSJub25lIiBzdHJva2U9Im5vbmUiLz48c3R5bGU+LnN0MntmaWxsOnJlZH0uc3Qze2ZpbGw6I2UwZTBlMH0uc3Q0e2ZpbGw6bm9uZTtzdHJva2U6IzY2NjtzdHJva2Utd2lkdGg6LjU7c3Ryb2tlLW1pdGVybGltaXQ6MTB9PC9zdHlsZT48ZyBjbGFzcz0iY3VycmVudExheWVyIiBzdHlsZT0iIj48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHBhdGggZD0iTTM1IDI4SDVhMSAxIDAgMCAxLTEtMVYxMmMwLS42LjQtMSAxLTFoMzBjLjUgMCAxIC40IDEgMXYxNWMwIC41LS41IDEtMSAxeiIgZmlsbD0iIzZkNmQ2ZCIgaWQ9IkxheWVyXzYiIGNsYXNzPSIiIGZpbGwtb3BhY2l0eT0iMSIvPjxwYXRoIGZpbGw9IiMyNDI0MjQiIGZpbGwtb3BhY2l0eT0iMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utb3BhY2l0eT0iMSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtZGFzaGFycmF5PSJub25lIiBzdHJva2UtbGluZWpvaW49Im1pdGVyIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWRhc2hvZmZzZXQ9IiIgZmlsbC1ydWxlPSJub256ZXJvIiBvcGFjaXR5PSIxIiBtYXJrZXItc3RhcnQ9IiIgbWFya2VyLW1pZD0iIiBtYXJrZXItZW5kPSIiIGQ9Ik01LjE4MzY3MzQ0MTQxMDA2NSwxOS4zMzY3MzQ4MzEzMzMxNiBDNS4xODM2NzM0NDE0MTAwNjUsMTYuMDM4NzMwNjM3NDczOTU0IDcuODU1MDU2ODM4NDM2MDIyLDEzLjM2NzM0NzI0MDQ0Nzk5OCAxMS4xNTMwNjEwMzIyOTUyMjcsMTMuMzY3MzQ3MjQwNDQ3OTk4IEMxNC40NTEwNjUyMjYxNTQ0MzQsMTMuMzY3MzQ3MjQwNDQ3OTk4IDE3LjEyMjQ0ODYyMzE4MDM5LDE2LjAzODczMDYzNzQ3Mzk1NCAxNy4xMjI0NDg2MjMxODAzOSwxOS4zMzY3MzQ4MzEzMzMxNiBDMTcuMTIyNDQ4NjIzMTgwMzksMjIuNjM0NzM5MDI1MTkyMzY3IDE0LjQ1MTA2NTIyNjE1NDQzNCwyNS4zMDYxMjI0MjIyMTgzMjMgMTEuMTUzMDYxMDMyMjk1MjI3LDI1LjMwNjEyMjQyMjIxODMyMyBDNy44NTUwNTY4Mzg0MzYwMjIsMjUuMzA2MTIyNDIyMjE4MzIzIDUuMTgzNjczNDQxNDEwMDY1LDIyLjYzNDczOTAyNTE5MjM2NyA1LjE4MzY3MzQ0MTQxMDA2NSwxOS4zMzY3MzQ4MzEzMzMxNiB6IiBpZD0ic3ZnXzEiIGNsYXNzPSIiLz48cGF0aCBmaWxsPSIjMDAwMDAwIiBmaWxsLW9wYWNpdHk9IjEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLW9wYWNpdHk9IjEiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLWRhc2hhcnJheT0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiIHN0cm9rZS1kYXNob2Zmc2V0PSIiIGZpbGwtcnVsZT0ibm9uemVybyIgb3BhY2l0eT0iMSIgbWFya2VyLXN0YXJ0PSIiIG1hcmtlci1taWQ9IiIgbWFya2VyLWVuZD0iIiBkPSJNNi42NzM0NjkzNjQ2NDMwOTcsMTkuMjk1OTE4NTMxNzE1ODcgQzYuNjczNDY5MzY0NjQzMDk3LDE2Ljc5ODQ1NTUyOTMyNjU2NCA4LjY5NjQxNDM5NjU3ODQzNywxNC43NzU1MTA0OTczOTEyMjQgMTEuMTkzODc3Mzk4OTY3NzQzLDE0Ljc3NTUxMDQ5NzM5MTIyNCBDMTMuNjkxMzQwNDAxMzU3MDUsMTQuNzc1NTEwNDk3MzkxMjI0IDE1LjcxNDI4NTQzMzI5MjM4OSwxNi43OTg0NTU1MjkzMjY1NjQgMTUuNzE0Mjg1NDMzMjkyMzg5LDE5LjI5NTkxODUzMTcxNTg3IEMxNS43MTQyODU0MzMyOTIzODksMjEuNzkzMzgxNTM0MTA1MTc2IDEzLjY5MTM0MDQwMTM1NzA1LDIzLjgxNjMyNjU2NjA0MDUxNiAxMS4xOTM4NzczOTg5Njc3NDMsMjMuODE2MzI2NTY2MDQwNTE2IEM4LjY5NjQxNDM5NjU3ODQzNywyMy44MTYzMjY1NjYwNDA1MTYgNi42NzM0NjkzNjQ2NDMwOTcsMjEuNzkzMzgxNTM0MTA1MTc2IDYuNjczNDY5MzY0NjQzMDk3LDE5LjI5NTkxODUzMTcxNTg3IHoiIGlkPSJzdmdfMiIgY2xhc3M9IiIvPjxwYXRoIGZpbGw9IiMxYTFhZWIiIGZpbGwtb3BhY2l0eT0iMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utb3BhY2l0eT0iMSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtZGFzaGFycmF5PSJub25lIiBzdHJva2UtbGluZWpvaW49Im1pdGVyIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWRhc2hvZmZzZXQ9IiIgZmlsbC1ydWxlPSJub256ZXJvIiBvcGFjaXR5PSIxIiBtYXJrZXItc3RhcnQ9IiIgbWFya2VyLW1pZD0iIiBtYXJrZXItZW5kPSIiIGQ9Ik0yMy40NDg5Nzk3OTQ5NzkwOTUsMjAuNzk1OTE4NDc5NTYxODA2IEMyMy40NDg5Nzk3OTQ5NzkwOTUsMTkuMDM2OTgyOTA5NTAzNTY0IDI0Ljg3MzcxNzYwNjcyNjI3NCwxNy42MTIyNDUwOTc3NTYzODYgMjYuNjMyNjUzMTc2Nzg0NTE1LDE3LjYxMjI0NTA5Nzc1NjM4NiBDMjguMzkxNTg4NzQ2ODQyNzUzLDE3LjYxMjI0NTA5Nzc1NjM4NiAyOS44MTYzMjY1NTg1ODk5MzUsMTkuMDM2OTgyOTA5NTAzNTY0IDI5LjgxNjMyNjU1ODU4OTkzNSwyMC43OTU5MTg0Nzk1NjE4MDYgQzI5LjgxNjMyNjU1ODU4OTkzNSwyMi41NTQ4NTQwNDk2MjAwNDQgMjguMzkxNTg4NzQ2ODQyNzUzLDIzLjk3OTU5MTg2MTM2NzIyNiAyNi42MzI2NTMxNzY3ODQ1MTUsMjMuOTc5NTkxODYxMzY3MjI2IEMyNC44NzM3MTc2MDY3MjYyNzQsMjMuOTc5NTkxODYxMzY3MjI2IDIzLjQ0ODk3OTc5NDk3OTA5NSwyMi41NTQ4NTQwNDk2MjAwNDQgMjMuNDQ4OTc5Nzk0OTc5MDk1LDIwLjc5NTkxODQ3OTU2MTgwNiB6IiBpZD0ic3ZnXzQiIGNsYXNzPSIiLz48cGF0aCBmaWxsPSIjZWIxYTFhIiBmaWxsLW9wYWNpdHk9IjEiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLW9wYWNpdHk9IjEiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLWRhc2hhcnJheT0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiIHN0cm9rZS1kYXNob2Zmc2V0PSIiIGZpbGwtcnVsZT0ibm9uemVybyIgb3BhY2l0eT0iMSIgbWFya2VyLXN0YXJ0PSIiIG1hcmtlci1taWQ9IiIgbWFya2VyLWVuZD0iIiBkPSJNMjguNzc1NTEwMDcyNzA4MTMsMTYuOTE4MzY3MjY2NjU0OTcgQzI4Ljc3NTUxMDA3MjcwODEzLDE1LjA2OTIyOTc4MTI5ODM0NyAzMC4yNzMzMTE0MzU4NDY5OTIsMTMuNTcxNDI4NDE4MTU5NDg1IDMyLjEyMjQ0ODkyMTIwMzYxLDEzLjU3MTQyODQxODE1OTQ4NSBDMzMuOTcxNTg2NDA2NTYwMjM1LDEzLjU3MTQyODQxODE1OTQ4NSAzNS40NjkzODc3Njk2OTkxLDE1LjA2OTIyOTc4MTI5ODM0NyAzNS40NjkzODc3Njk2OTkxLDE2LjkxODM2NzI2NjY1NDk3IEMzNS40NjkzODc3Njk2OTkxLDE4Ljc2NzUwNDc1MjAxMTU5IDMzLjk3MTU4NjQwNjU2MDIzNSwyMC4yNjUzMDYxMTUxNTA0NSAzMi4xMjI0NDg5MjEyMDM2MSwyMC4yNjUzMDYxMTUxNTA0NSBDMzAuMjczMzExNDM1ODQ2OTkyLDIwLjI2NTMwNjExNTE1MDQ1IDI4Ljc3NTUxMDA3MjcwODEzLDE4Ljc2NzUwNDc1MjAxMTU5IDI4Ljc3NTUxMDA3MjcwODEzLDE2LjkxODM2NzI2NjY1NDk3IHoiIGlkPSJzdmdfMyIgY2xhc3M9IiIvPjxwYXRoIGZpbGw9IiNlOGU4NDEiIGZpbGwtb3BhY2l0eT0iMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utb3BhY2l0eT0iMSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtZGFzaGFycmF5PSJub25lIiBzdHJva2UtbGluZWpvaW49Im1pdGVyIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWRhc2hvZmZzZXQ9IiIgZmlsbC1ydWxlPSJub256ZXJvIiBvcGFjaXR5PSIxIiBtYXJrZXItc3RhcnQ9IiIgbWFya2VyLW1pZD0iIiBtYXJrZXItZW5kPSIiIGQ9Ik0xOC41MzA2MTIyODk5MDU1NDgsMjIuNjEyMjQ0OTYzNjQ1OTM1IEMxOC41MzA2MTIyODk5MDU1NDgsMjEuNjMxMzAwMTA2MjMzIDE5LjMyNTE3NzYyNDQxMDAzLDIwLjgzNjczNDc3MTcyODUxNiAyMC4zMDYxMjI0ODE4MjI5NjgsMjAuODM2NzM0NzcxNzI4NTE2IEMyMS4yODcwNjczMzkyMzU5MDQsMjAuODM2NzM0NzcxNzI4NTE2IDIyLjA4MTYzMjY3Mzc0MDM4NywyMS42MzEzMDAxMDYyMzMgMjIuMDgxNjMyNjczNzQwMzg3LDIyLjYxMjI0NDk2MzY0NTkzNSBDMjIuMDgxNjMyNjczNzQwMzg3LDIzLjU5MzE4OTgyMTA1ODg3IDIxLjI4NzA2NzMzOTIzNTkwNCwyNC4zODc3NTUxNTU1NjMzNTQgMjAuMzA2MTIyNDgxODIyOTY4LDI0LjM4Nzc1NTE1NTU2MzM1NCBDMTkuMzI1MTc3NjI0NDEwMDMsMjQuMzg3NzU1MTU1NTYzMzU0IDE4LjUzMDYxMjI4OTkwNTU0OCwyMy41OTMxODk4MjEwNTg4NyAxOC41MzA2MTIyODk5MDU1NDgsMjIuNjEyMjQ0OTYzNjQ1OTM1IHoiIGlkPSJzdmdfNiIgY2xhc3M9IiIvPjwvZz48L3N2Zz4=';
 
 const ACTION = {
     GET: 1,
@@ -130,8 +133,10 @@ class Scratch3PlRunBlocks {
     }
     
     _sendMessage (message) {
-        message[2] = message.length - 3;
-        window.ipcRenderer.send('send-data', message);
+        if (window.ipcRenderer) {
+            message[2] = message.length - 3;
+            window.ipcRenderer.send('send-data', message);
+        }
     }
 
     getInfo () {
@@ -141,8 +146,8 @@ class Scratch3PlRunBlocks {
                 id: 'plrun.name',
                 default: 'Coding Plrun'
             }),
-            color1: '#FF8C1A',
-            color2: '#DB6E00',
+            color1: '#575757',
+            color2: '#171717',
             blockIconURI: blockIconURI,
             blocks: [
                 {
@@ -156,8 +161,8 @@ class Scratch3PlRunBlocks {
                     arguments: {
                         ARG1: {
                             type: ArgumentType.NUMBER,
-                            menu: 'digitalValue',
-                            defaultValue: 1
+                            menu: 'vibratorValue',
+                            defaultValue: 200
                         }
                     }
                 },
@@ -397,12 +402,17 @@ class Scratch3PlRunBlocks {
                     opcode: 'setLedColor',
                     text: formatMessage({
                         id: 'plrun.setLedColor',
-                        default: 'turn on LED in [ARG1]',
+                        default: 'turn on [ARG1] LED in [ARG2]',
                         description: 'turn on LED'
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
                         ARG1: {
+                            type: ArgumentType.NUMBER,
+                            menu: 'ledType',
+                            defaultValue: 0
+                        },
+                        ARG2: {
                             type: ArgumentType.COLOR
                         }
                     }
@@ -411,11 +421,19 @@ class Scratch3PlRunBlocks {
                     opcode: 'stopLed',
                     text: formatMessage({
                         id: 'plrun.stopLed',
-                        default: 'turn off LED',
+                        default: 'turn off [ARG1] LED',
                         description: 'turn off LED'
                     }),
-                    blockType: BlockType.COMMAND
+                    blockType: BlockType.COMMAND,
+                    arguments: {
+                        ARG1: {
+                            type: ArgumentType.NUMBER,
+                            menu: 'ledType',
+                            defaultValue: 0
+                        }
+                    }
                 },
+                /*
                 '---',
                 {
                     opcode: 'getSoil',
@@ -425,6 +443,44 @@ class Scratch3PlRunBlocks {
                         description: 'get soil sensor value'
                     }),
                     blockType: BlockType.REPORTER
+                },
+                */
+                '---',
+                {
+                    opcode: 'getSoundSensor',
+                    text: formatMessage({
+                        id: 'plrun.getSoundSensor',
+                        default: 'get sound sensor value',
+                        description: 'get sound sensor value'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'getLightSensor',
+                    text: formatMessage({
+                        id: 'plrun.getLightSensor',
+                        default: 'get light sensor value',
+                        description: 'get light sensor value'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'getTempSensor',
+                    text: formatMessage({
+                        id: 'plrun.getTempSensor',
+                        default: 'get temperature sensor value',
+                        description: 'get temperature sensor value'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                {
+                    opcode: 'getShakeSensor',
+                    text: formatMessage({
+                        id: 'plrun.getShakeSensor',
+                        default: 'get shake sensor value',
+                        description: 'get shake sensor value'
+                    }),
+                    blockType: BlockType.BOOLEAN
                 },
                 '---',
                 {
@@ -472,7 +528,8 @@ class Scratch3PlRunBlocks {
                         description: 'read analog value'
                     }),
                     blockType: BlockType.REPORTER
-                },
+                }
+                /*
                 {
                     opcode: 'getAnalogValue',
                     text: formatMessage({
@@ -481,7 +538,7 @@ class Scratch3PlRunBlocks {
                         description: 'read variable resistance'
                     }),
                     blockType: BlockType.REPORTER
-                }
+                }*/
             ],
             menus: {
                 motorSpeed: {
@@ -893,6 +950,59 @@ class Scratch3PlRunBlocks {
                             value: 0
                         }
                     ]
+                },
+                vibratorValue: {
+                    acceptReporters: true,
+                    items: [
+                        {
+                            text: formatMessage({
+                                id: 'plrun.power_high',
+                                default: 'high'
+                            }),
+                            value: 200
+                        },
+                        {
+                            text: formatMessage({
+                                id: 'plrun.power_middle',
+                                default: 'middle'
+                            }),
+                            value: 150
+                        },
+                        {
+                            text: formatMessage({
+                                id: 'plrun.power_low',
+                                default: 'low'
+                            }),
+                            value: 50
+                        },
+                        {
+                            text: formatMessage({
+                                id: 'plrun.off',
+                                default: 'off'
+                            }),
+                            value: 0
+                        }
+                    ]
+                },
+                ledType: {
+                    acceptReporters: true,
+                    items: [
+                        {
+                            text: formatMessage({
+                                id: 'plrun.all',
+                                default: 'all'
+                            }),
+                            value: 0
+                        },
+                        {text: '1', value: 1},
+                        {text: '2', value: 2},
+                        {text: '3', value: 3},
+                        {text: '4', value: 4},
+                        {text: '5', value: 5},
+                        {text: '6', value: 6},
+                        {text: '7', value: 7},
+                        {text: '8', value: 8}
+                    ]
                 }
             }
         };
@@ -902,7 +1012,7 @@ class Scratch3PlRunBlocks {
     }
 
     setVibrator (args) {
-        this._sendMessage([0xFF, 0x55, 0, 0, ACTION.SET, DEVICE.DIGITAL, 2, args.ARG1 ? 255 : 0]);
+        this._sendMessage([0xFF, 0x55, 0, 0, ACTION.SET, DEVICE.PWM, 5, Cast.toNumber(args.ARG1)]);
     }
 
     setFan (args) {
@@ -929,12 +1039,11 @@ class Scratch3PlRunBlocks {
     }
 
     setAudioOctave (args) {
-        let note = args.ARG1;
-        note = Math.max(Math.min(note, 119), 24) - 24;
-        const value = TONE_MAP[note];
-        const duration = args.ARG2;
+        const note = Math.max(Math.min(args.ARG1, 119), 24);
+        const duration = Cast.toNumber(args.ARG2);
+        const freq = Math.round(Math.pow(2, ((note - 69 + 12) / 12)) * 440);
 
-        this._playNote(value, duration);
+        this._playNote(freq, duration);
         return new Promise(resolve => {
             setTimeout(() => {
                 resolve();
@@ -955,7 +1064,7 @@ class Scratch3PlRunBlocks {
     }
     
     stopAudio (args) {
-        const duration = args.ARG1;
+        const duration = Cast.toNumber(args.ARG1);
 
         this._playNote(0, 0);
         return new Promise(resolve => {
@@ -1057,19 +1166,21 @@ class Scratch3PlRunBlocks {
     getButton (args) {
         const which = Cast.toNumber(args.ARG1);
 
-        return this.analogValue[which] !== 0;
+        return this.digitalValue[which] !== 0;
     }
     
     setLed (args) {
     }
     
     setLedColor (args) {
-        const rgb = Cast.toRgbColorObject(args.ARG1);
-        this._sendMessage([0xFF, 0x55, 0, 0, ACTION.SET, DEVICE.LED, 13, rgb.r, rgb.g, rgb.b]);
+        const type = Cast.toNumber(args.ARG1);
+        const rgb = Cast.toRgbColorObject(args.ARG2);
+        this._sendMessage([0xFF, 0x55, 0, 0, ACTION.SET, DEVICE.LED, type, rgb.r, rgb.g, rgb.b]);
     }
     
     stopLed (args) {
-        this._sendMessage([0xFF, 0x55, 0, 0, ACTION.SET, DEVICE.LED, 13, 0, 0, 0]);
+        const type = Cast.toNumber(args.ARG1);
+        this._sendMessage([0xFF, 0x55, 0, 0, ACTION.SET, DEVICE.LED, type, 0, 0, 0]);
     }
     
     getSoil (args) {
@@ -1091,6 +1202,22 @@ class Scratch3PlRunBlocks {
     
     getAnalogValue (args) {
         return this.analogValue[4];
+    }
+
+    getSoundSensor (args) {
+        return this.analogValue[2];
+    }
+
+    getLightSensor (args) {
+        return this.analogValue[3];
+    }
+
+    getTempSensor (args) {
+        return this.analogValue[5];
+    }
+
+    getShakeSensor (args) {
+        return this.digitalValue[1] !== 0;
     }
     
     _formatMenu (menu) {
