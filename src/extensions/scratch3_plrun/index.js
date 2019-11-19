@@ -28,7 +28,8 @@ const DEVICE = {
     PULSEIN: 6,
     ULTRASONIC: 7,
     TIMER: 8,
-    LED: 9
+    LED: 9,
+    TEMP: 10
 };
 
 const TONE_MAP = [
@@ -47,15 +48,15 @@ const TONE_MAP = [
 ];
 
 const DIRECTION = {
-    CENTER: 0,
-    UP: 1,
-    LEFT: 2,
-    RIGHT: 3,
-    DOWN: 4,
-    LEFT_UP: 5,
-    LEFT_DOWN: 6,
-    RIGHT_UP: 7,
-    RIGHT_DOWN: 8
+    CENTER: '0',
+    UP: '1',
+    LEFT: '2',
+    RIGHT: '3',
+    DOWN: '4',
+    LEFT_UP: '5',
+    LEFT_DOWN: '6',
+    RIGHT_UP: '7',
+    RIGHT_DOWN: '8'
 };
 
 const COLOR = {
@@ -91,6 +92,8 @@ class Scratch3PlRunBlocks {
         this.digitalValue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         this.analogValue = [0, 0, 0, 0, 0, 0];
         this.ultraSonicValue = 0;
+        this.tempValue = 0;
+        this.ledValue = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]];
 
         if (window.ipcRenderer) {
             window.ipcRenderer.on('recv-data', (event, arg) => {
@@ -124,6 +127,8 @@ class Scratch3PlRunBlocks {
                 this.analogValue[pin] = value;
             } else if (device === DEVICE.ULTRASONIC) {
                 this.ultraSonicValue = value;
+            } else if (device === DEVICE.TEMP) {
+                this.tempValue = value;
             } else {
                 console.log('unknown', value, pin, device);
             }
@@ -135,7 +140,7 @@ class Scratch3PlRunBlocks {
     _sendMessage (message) {
         if (window.ipcRenderer) {
             message[2] = message.length - 3;
-            window.ipcRenderer.send('send-data', message);
+            window.ipcRenderer.sendSync('send-data', message);
         }
     }
 
@@ -183,6 +188,7 @@ class Scratch3PlRunBlocks {
                         }
                     }
                 },
+                /*
                 '---',
                 {
                     opcode: 'setServo',
@@ -199,7 +205,6 @@ class Scratch3PlRunBlocks {
                         }
                     }
                 },
-                /*
                 {
                     opcode: 'setMotor',
                     text: formatMessage({
@@ -331,16 +336,6 @@ class Scratch3PlRunBlocks {
                 },
                 '---',
                 {
-                    opcode: 'getUltrasonic',
-                    text: formatMessage({
-                        id: 'plrun.getUltrasonic',
-                        default: 'get ultrasonic value',
-                        description: 'get ultrasonic value'
-                    }),
-                    blockType: BlockType.REPORTER
-                },
-                '---',
-                {
                     opcode: 'getJoystick',
                     text: formatMessage({
                         id: 'plrun.getJoystick',
@@ -447,6 +442,15 @@ class Scratch3PlRunBlocks {
                 */
                 '---',
                 {
+                    opcode: 'getUltrasonic',
+                    text: formatMessage({
+                        id: 'plrun.getUltrasonic',
+                        default: 'get ultrasonic value',
+                        description: 'get ultrasonic value'
+                    }),
+                    blockType: BlockType.REPORTER
+                },
+                {
                     opcode: 'getSoundSensor',
                     text: formatMessage({
                         id: 'plrun.getSoundSensor',
@@ -464,6 +468,7 @@ class Scratch3PlRunBlocks {
                     }),
                     blockType: BlockType.REPORTER
                 },
+                /*
                 {
                     opcode: 'getTempSensor',
                     text: formatMessage({
@@ -482,6 +487,7 @@ class Scratch3PlRunBlocks {
                     }),
                     blockType: BlockType.BOOLEAN
                 },
+                */
                 '---',
                 {
                     opcode: 'getDigital',
@@ -544,12 +550,12 @@ class Scratch3PlRunBlocks {
                 motorSpeed: {
                     acceptReporters: true,
                     items: [
-                        {text: '0', value: 0},
-                        {text: '20', value: 50},
-                        {text: '40', value: 100},
-                        {text: '60', value: 150},
-                        {text: '80', value: 200},
-                        {text: '100', value: 250}
+                        {text: '0', value: '0'},
+                        {text: '20', value: '50'},
+                        {text: '40', value: '100'},
+                        {text: '60', value: '150'},
+                        {text: '80', value: '200'},
+                        {text: '100', value: '250'}
                     ]
                 },
                 motorWhich: {
@@ -560,14 +566,14 @@ class Scratch3PlRunBlocks {
                                 id: 'plrun.left',
                                 default: 'left'
                             }),
-                            value: 0
+                            value: '0'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.right',
                                 default: 'right'
                             }),
-                            value: 1
+                            value: '1'
                         }
                     ]
                 },
@@ -579,14 +585,14 @@ class Scratch3PlRunBlocks {
                                 id: 'plrun.forward',
                                 default: 'forward'
                             }),
-                            value: 0
+                            value: '0'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.backward',
                                 default: 'backward'
                             }),
-                            value: 1
+                            value: '1'
                         }
                     ]
                 },
@@ -598,28 +604,28 @@ class Scratch3PlRunBlocks {
                                 id: 'plrun.forward',
                                 default: 'forward'
                             }),
-                            value: 0
+                            value: '0'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.backward',
                                 default: 'backward'
                             }),
-                            value: 1
+                            value: '1'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.left',
                                 default: 'left'
                             }),
-                            value: 2
+                            value: '2'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.right',
                                 default: 'right'
                             }),
-                            value: 3
+                            value: '3'
                         }
                     ]
                 },
@@ -631,97 +637,97 @@ class Scratch3PlRunBlocks {
                                 id: 'plrun.do_name',
                                 default: 'do'
                             }),
-                            value: 1
+                            value: '1'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.do_sharp_name',
                                 default: 'do#(re♭)'
                             }),
-                            value: 2
+                            value: '2'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.re_name',
                                 default: 're'
                             }),
-                            value: 3
+                            value: '3'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.re_sharp_name',
                                 default: 're#(mi♭)'
                             }),
-                            value: 4
+                            value: '4'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.mi_name',
                                 default: 'mi'
                             }),
-                            value: 5
+                            value: '5'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.fa_name',
                                 default: 'fa'
                             }),
-                            value: 6
+                            value: '6'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.fa_sharp_name',
                                 default: 'fa#(sol♭)'
                             }),
-                            value: 7
+                            value: '7'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.sol_name',
                                 default: 'sol'
                             }),
-                            value: 8
+                            value: '8'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.sol_sharp_name',
                                 default: 'sol#(la♭)'
                             }),
-                            value: 9
+                            value: '9'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.la_name',
                                 default: 'la'
                             }),
-                            value: 10
+                            value: '10'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.la_sharp_name',
                                 default: 'la#(si♭)'
                             }),
-                            value: 11
+                            value: '11'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.si_name',
                                 default: 'si'
                             }),
-                            value: 12
+                            value: '12'
                         }
                     ]
                 },
                 audioOtave: {
                     acceptReporters: true,
                     items: [
-                        {text: '1', value: 1},
-                        {text: '2', value: 2},
-                        {text: '3', value: 3},
-                        {text: '4', value: 4},
-                        {text: '5', value: 5},
-                        {text: '6', value: 6},
-                        {text: '7', value: 7}
+                        {text: '1', value: '1'},
+                        {text: '2', value: '2'},
+                        {text: '3', value: '3'},
+                        {text: '4', value: '4'},
+                        {text: '5', value: '5'},
+                        {text: '6', value: '6'},
+                        {text: '7', value: '7'}
                     ]
                 },
                 audioBeat: {
@@ -732,42 +738,42 @@ class Scratch3PlRunBlocks {
                                 id: 'plrun.buzzer_wn',
                                 default: 'whole note'
                             }),
-                            value: 1000
+                            value: '1000'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.buzzer_hn',
                                 default: 'half note'
                             }),
-                            value: 500
+                            value: '500'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.buzzer_qn',
                                 default: 'quarter note'
                             }),
-                            value: 250
+                            value: '250'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.buzzer_en',
                                 default: 'eighth note'
                             }),
-                            value: 125
+                            value: '125'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.buzzer_sn',
                                 default: 'sixteenth note'
                             }),
-                            value: 63
+                            value: '63'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.buzzer_tn',
                                 default: 'thirtysecond note'
                             }),
-                            value: 31
+                            value: '31'
                         }
                     ]
                 },
@@ -908,14 +914,14 @@ class Scratch3PlRunBlocks {
                                 id: 'plrun.button_red',
                                 default: 'red'
                             }),
-                            value: 7
+                            value: '7'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.button_blue',
                                 default: 'blue'
                             }),
-                            value: 6
+                            value: '6'
                         }
                     ]
                 },
@@ -924,11 +930,11 @@ class Scratch3PlRunBlocks {
                     items: [
                         {
                             text: '1',
-                            value: 11
+                            value: '11'
                         },
                         {
                             text: '2',
-                            value: 12
+                            value: '12'
                         }
                     ]
                 },
@@ -940,14 +946,14 @@ class Scratch3PlRunBlocks {
                                 id: 'plrun.on',
                                 default: 'on'
                             }),
-                            value: 1
+                            value: '1'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.off',
                                 default: 'off'
                             }),
-                            value: 0
+                            value: '0'
                         }
                     ]
                 },
@@ -959,28 +965,28 @@ class Scratch3PlRunBlocks {
                                 id: 'plrun.power_high',
                                 default: 'high'
                             }),
-                            value: 200
+                            value: '200'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.power_middle',
                                 default: 'middle'
                             }),
-                            value: 150
+                            value: '150'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.power_low',
                                 default: 'low'
                             }),
-                            value: 50
+                            value: '50'
                         },
                         {
                             text: formatMessage({
                                 id: 'plrun.off',
                                 default: 'off'
                             }),
-                            value: 0
+                            value: '0'
                         }
                     ]
                 },
@@ -992,16 +998,16 @@ class Scratch3PlRunBlocks {
                                 id: 'plrun.all',
                                 default: 'all'
                             }),
-                            value: 0
+                            value: '0'
                         },
-                        {text: '1', value: 1},
-                        {text: '2', value: 2},
-                        {text: '3', value: 3},
-                        {text: '4', value: 4},
-                        {text: '5', value: 5},
-                        {text: '6', value: 6},
-                        {text: '7', value: 7},
-                        {text: '8', value: 8}
+                        {text: '1', value: '1'},
+                        {text: '2', value: '2'},
+                        {text: '3', value: '3'},
+                        {text: '4', value: '4'},
+                        {text: '5', value: '5'},
+                        {text: '6', value: '6'},
+                        {text: '7', value: '7'},
+                        {text: '8', value: '8'}
                     ]
                 }
             }
@@ -1089,8 +1095,8 @@ class Scratch3PlRunBlocks {
     }
     
     getUltrasonic (args) {
-        const d = [0xFF, 0x55, 0, 0, ACTION.GET, DEVICE.ULTRASONIC, 10, 9];
-        this._sendMessage(d);
+        // const d = [0xFF, 0x55, 0, 0, ACTION.GET, DEVICE.ULTRASONIC, 10, 9];
+        // this._sendMessage(d);
         return parseFloat(this.ultraSonicValue.toFixed(2));
     }
     
@@ -1171,16 +1177,61 @@ class Scratch3PlRunBlocks {
     
     setLed (args) {
     }
+
+    _compareLed (type, r, g, b) {
+        return this.ledValue[type][0] === r && this.ledValue[type][1] === g && this.ledValue[type][2] === b;
+    }
+
+    checkLed (type, r, g, b) {
+        let ret = false;
+
+        if (type === 0) {
+            let check = 0;
+            for (let i = 0; i < 8; i++) {
+                if (!this._compareLed(i, r, g, b)) {
+                    check++;
+                }
+                this.ledValue[i] = [r, g, b];
+            }
+            if (check === 0) {
+                ret = true;
+            }
+        } else {
+            if (this._compareLed(type - 1, r, g, b)) {
+                ret = true;
+            }
+            this.ledValue[type - 1] = [r, g, b];
+        }
+        
+        return ret;
+    }
     
     setLedColor (args) {
         const type = Cast.toNumber(args.ARG1);
         const rgb = Cast.toRgbColorObject(args.ARG2);
+
+        if (this.checkLed(type, rgb.r, rgb.g, rgb.b)) {
+            return;
+        }
         this._sendMessage([0xFF, 0x55, 0, 0, ACTION.SET, DEVICE.LED, type, rgb.r, rgb.g, rgb.b]);
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve();
+            }, 10);
+        });
     }
     
     stopLed (args) {
         const type = Cast.toNumber(args.ARG1);
+        if (this.checkLed(type, 0, 0, 0)) {
+            return;
+        }
         this._sendMessage([0xFF, 0x55, 0, 0, ACTION.SET, DEVICE.LED, type, 0, 0, 0]);
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve();
+            }, 10);
+        });
     }
     
     getSoil (args) {
@@ -1205,15 +1256,15 @@ class Scratch3PlRunBlocks {
     }
 
     getSoundSensor (args) {
-        return this.analogValue[2];
-    }
-
-    getLightSensor (args) {
         return this.analogValue[3];
     }
 
+    getLightSensor (args) {
+        return this.analogValue[6];
+    }
+
     getTempSensor (args) {
-        return this.analogValue[5];
+        return this.tempValue;
     }
 
     getShakeSensor (args) {
