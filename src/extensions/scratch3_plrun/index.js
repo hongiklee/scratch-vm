@@ -48,15 +48,15 @@ const TONE_MAP = [
 ];
 
 const DIRECTION = {
-    CENTER: '0',
-    UP: '1',
-    LEFT: '2',
-    RIGHT: '3',
-    DOWN: '4',
-    LEFT_UP: '5',
-    LEFT_DOWN: '6',
-    RIGHT_UP: '7',
-    RIGHT_DOWN: '8'
+    CENTER: 0,
+    UP: 1,
+    LEFT: 2,
+    RIGHT: 3,
+    DOWN: 4,
+    LEFT_UP: 5,
+    LEFT_DOWN: 6,
+    RIGHT_UP: 7,
+    RIGHT_DOWN: 8
 };
 
 const COLOR = {
