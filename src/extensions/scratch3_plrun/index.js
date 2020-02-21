@@ -1239,7 +1239,7 @@ class Scratch3PlRunBlocks {
     }
     
     getAnalog (args) {
-        return this.analogValue[5];
+        return this.analogValue[7];
     }
     
     getDigital (args) {
